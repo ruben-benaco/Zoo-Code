@@ -8,6 +8,7 @@
 	"unknownToolError": "Zoo đã cố gắng sử dụng một công cụ không xác định: \"{{toolName}}\". Đang thử lại...",
 	"missingToolParameter": "Zoo đã cố gắng sử dụng {{toolName}} mà không có giá trị cho tham số bắt buộc '{{paramName}}'. Đang thử lại...",
 	"missingToolParameterWithPath": "Zoo đã cố gắng sử dụng {{toolName}} cho '{{relPath}}' mà không có giá trị cho tham số bắt buộc '{{paramName}}'. Đang thử lại...",
+	"duplicateToolResultDropped": "Đã loại bỏ {{droppedCount}} kết quả trùng lặp của lệnh gọi tool '{{toolUseId}}' trước khi gửi yêu cầu. Cuộc hội thoại vẫn tiếp tục bình thường, nhưng điều này cho thấy có lỗi trong cách kết quả của tool được ghi lại.",
 	"executeCommand": {
 		"destructiveCommandGuard": {
 			"blocked": "Destructive Command Guard đã chặn lệnh này.",

@@ -20,7 +20,8 @@
 		"search_placeholder": "Поиск...",
 		"no_results": "Результатов не найдено",
 		"close": "Закрыть",
-		"clear_search_aria_label": "Очистить поиск"
+		"clear_search_aria_label": "Очистить поиск",
+		"loading_aria_label": "Загрузка"
 	},
 	"mermaid": {
 		"loading": "Создание диаграммы mermaid...",

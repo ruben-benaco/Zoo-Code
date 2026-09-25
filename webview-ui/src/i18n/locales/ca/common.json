@@ -20,7 +20,8 @@
 		"search_placeholder": "Cerca...",
 		"no_results": "No s'han trobat resultats",
 		"close": "Tanca",
-		"clear_search_aria_label": "Esborra la cerca"
+		"clear_search_aria_label": "Esborra la cerca",
+		"loading_aria_label": "Carregant"
 	},
 	"mermaid": {
 		"loading": "Generant diagrama mermaid...",

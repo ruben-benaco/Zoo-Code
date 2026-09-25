@@ -20,7 +20,8 @@
 		"search_placeholder": "Pesquisar...",
 		"no_results": "Nenhum resultado encontrado",
 		"close": "Fechar",
-		"clear_search_aria_label": "Limpar pesquisa"
+		"clear_search_aria_label": "Limpar pesquisa",
+		"loading_aria_label": "Carregando"
 	},
 	"mermaid": {
 		"loading": "Gerando diagrama mermaid...",

@@ -20,7 +20,8 @@
 		"search_placeholder": "搜尋...",
 		"no_results": "找不到結果",
 		"close": "關閉",
-		"clear_search_aria_label": "清除搜尋"
+		"clear_search_aria_label": "清除搜尋",
+		"loading_aria_label": "載入中"
 	},
 	"mermaid": {
 		"loading": "正在產生 Mermaid 圖表...",

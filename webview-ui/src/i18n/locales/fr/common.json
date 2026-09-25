@@ -20,7 +20,8 @@
 		"search_placeholder": "Rechercher...",
 		"no_results": "Aucun résultat trouvé",
 		"close": "Fermer",
-		"clear_search_aria_label": "Effacer la recherche"
+		"clear_search_aria_label": "Effacer la recherche",
+		"loading_aria_label": "Chargement"
 	},
 	"mermaid": {
 		"loading": "Génération du diagramme mermaid...",

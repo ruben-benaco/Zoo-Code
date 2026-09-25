@@ -20,7 +20,8 @@
 		"search_placeholder": "Cari...",
 		"no_results": "Tidak ada hasil yang ditemukan",
 		"close": "Tutup",
-		"clear_search_aria_label": "Hapus pencarian"
+		"clear_search_aria_label": "Hapus pencarian",
+		"loading_aria_label": "Memuat"
 	},
 	"mermaid": {
 		"loading": "Membuat diagram mermaid...",

@@ -206,11 +206,13 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 						headers: { "anthropic-beta": betas.join(",") },
 						...(abortSignal && { signal: abortSignal }),
 					}
+					metadata?.rawApiDump?.request(this.providerName, { params: requestParams, requestOptions })
 					stream = await this.client.messages.create(
 						requestParams as Anthropic.Messages.MessageCreateParamsStreaming,
 						requestOptions,
 					)
 				} catch (error) {
+					metadata?.rawApiDump?.error(this.providerName, error)
 					TelemetryService.instance.captureException(
 						new ApiProviderError(
 							error instanceof Error ? error.message : String(error),
@@ -238,11 +240,13 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 						stream: true,
 						...nativeToolParams,
 					}
+					metadata?.rawApiDump?.request(this.providerName, { params: requestParams })
 					stream = (await this.client.messages.create(
 						requestParams as Anthropic.Messages.MessageCreateParamsStreaming,
 						abortSignal ? { signal: abortSignal } : undefined,
 					)) as any
 				} catch (error) {
+					metadata?.rawApiDump?.error(this.providerName, error)
 					TelemetryService.instance.captureException(
 						new ApiProviderError(
 							error instanceof Error ? error.message : String(error),
@@ -267,6 +271,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 		let cacheReadTokens = 0
 
 		for await (const chunk of withFinallyCleanup(stream, removeExternalAbortListener)) {
+			metadata?.rawApiDump?.event(this.providerName, chunk)
 			switch (chunk.type) {
 				case "message_start": {
 					// Tells us cache reads/writes/input/output.

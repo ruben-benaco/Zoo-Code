@@ -10,6 +10,7 @@
 	"missingToolParameterWithPath": "Zoo가 '{{relPath}}'에 대해 필수 매개변수 '{{paramName}}'의 값 없이 {{toolName}}을(를) 사용하려고 했습니다. 다시 시도 중...",
 	"duplicateToolResultDropped": "요청을 보내기 전에 도구 호출 '{{toolUseId}}'의 중복된 결과 {{droppedCount}}개를 제거했습니다. 대화는 정상적으로 계속되지만, 도구 결과를 기록하는 방식에 버그가 있음을 의미합니다.",
 	"executeCommand": {
+		"parseRejected": "명령을 파싱할 수 없어서 실행하지 않았어요: {{error}}",
 		"destructiveCommandGuard": {
 			"blocked": "Destructive Command Guard가 이 명령어를 차단했습니다.",
 			"blockedWithReason": "Destructive Command Guard가 이 명령어를 차단했습니다. DCG 메시지: {{reason}}",

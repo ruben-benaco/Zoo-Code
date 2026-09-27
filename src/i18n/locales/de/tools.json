@@ -10,6 +10,7 @@
 	"missingToolParameterWithPath": "Zoo hat versucht, {{toolName}} für '{{relPath}}' ohne Wert für den erforderlichen Parameter '{{paramName}}' zu verwenden. Wiederhole Versuch...",
 	"duplicateToolResultDropped": "{{droppedCount}} doppelte Ergebnis(se) für den Tool-Aufruf '{{toolUseId}}' wurden vor dem Senden der Anfrage entfernt. Die Unterhaltung läuft normal weiter, aber das deutet auf einen Fehler bei der Aufzeichnung des Tool-Ergebnisses hin.",
 	"executeCommand": {
+		"parseRejected": "Der Befehl wurde nicht ausgeführt, weil er nicht geparst werden konnte: {{error}}",
 		"destructiveCommandGuard": {
 			"blocked": "Destructive Command Guard hat diesen Befehl blockiert.",
 			"blockedWithReason": "Destructive Command Guard hat diesen Befehl blockiert. Nachricht von DCG: {{reason}}",

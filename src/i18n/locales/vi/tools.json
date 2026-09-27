@@ -10,6 +10,7 @@
 	"missingToolParameterWithPath": "Zoo đã cố gắng sử dụng {{toolName}} cho '{{relPath}}' mà không có giá trị cho tham số bắt buộc '{{paramName}}'. Đang thử lại...",
 	"duplicateToolResultDropped": "Đã loại bỏ {{droppedCount}} kết quả trùng lặp của lệnh gọi tool '{{toolUseId}}' trước khi gửi yêu cầu. Cuộc hội thoại vẫn tiếp tục bình thường, nhưng điều này cho thấy có lỗi trong cách kết quả của tool được ghi lại.",
 	"executeCommand": {
+		"parseRejected": "Lệnh không được chạy vì không thể phân tích cú pháp: {{error}}",
 		"destructiveCommandGuard": {
 			"blocked": "Destructive Command Guard đã chặn lệnh này.",
 			"blockedWithReason": "Destructive Command Guard đã chặn lệnh này. Thông báo từ DCG: {{reason}}",

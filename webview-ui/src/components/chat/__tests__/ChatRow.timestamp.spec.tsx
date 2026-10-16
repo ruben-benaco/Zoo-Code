@@ -300,14 +300,15 @@ describe("ChatRow – message timestamp", () => {
 			expect(screen.getByTestId("message-timestamp")).toBeInTheDocument()
 		})
 
-		it("shows the time again when the edit is sent", () => {
+		it("keeps the edit box and hides the time after sending, until the edit is confirmed", () => {
 			renderRow(message)
 			startEditing()
 
 			fireEvent.click(screen.getByTestId("send-edit"))
 
-			expect(screen.queryByTestId("edit-box")).not.toBeInTheDocument()
-			expect(screen.getByTestId("message-timestamp")).toBeInTheDocument()
+			// Sending asks for confirmation; cancelling it must land back in the editor.
+			expect(screen.getByTestId("edit-box")).toBeInTheDocument()
+			expect(screen.queryByTestId("message-timestamp")).not.toBeInTheDocument()
 		})
 
 		it("cannot be edited while streaming, so the time stays", () => {

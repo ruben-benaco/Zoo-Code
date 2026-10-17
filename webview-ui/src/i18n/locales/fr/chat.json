@@ -239,7 +239,9 @@
 		"clickToEditPattern": "Clique pour modifier le motif"
 	},
 	"text": {
-		"rooSaid": "Zoo a dit"
+		"rooSaid": "Zoo a dit",
+		"rooProgressUpdate": "Zoo (point d'avancement)",
+		"progressUpdateTooltip": "Le fournisseur a envoyé ceci comme point d'avancement, pas comme une réponse normale. Selon le fournisseur, il peut être plus court que ce que le modèle a écrit."
 	},
 	"feedback": {
 		"youSaid": "Tu as dit"

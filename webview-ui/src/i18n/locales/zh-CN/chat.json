@@ -238,7 +238,9 @@
 		"clickToEditPattern": "点击编辑模式匹配规则"
 	},
 	"text": {
-		"rooSaid": "Zoo 说"
+		"rooSaid": "Zoo 说",
+		"rooProgressUpdate": "Zoo（进度更新）",
+		"progressUpdateTooltip": "提供商将此作为进度更新发送，而不是常规回复。根据提供商的不同，它可能比模型实际写的内容更短。"
 	},
 	"feedback": {
 		"youSaid": "你说"

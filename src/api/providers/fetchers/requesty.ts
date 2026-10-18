@@ -17,6 +17,13 @@ const REQUESTY_ADAPTIVE_REASONING_MODELS = new Set([
 	"anthropic/claude-haiku-5-5",
 ])
 
+// Their text between tool calls only summarizes, so they are offered `send_user_message`.
+const REQUESTY_SUMMARIZING_MODELS = new Set([
+	"anthropic/claude-fable-5.1",
+	"anthropic/claude-fable-5",
+	"anthropic/claude-opus-5-5",
+])
+
 export async function getRequestyModels(
 	baseUrl?: string,
 	apiKey?: string,
@@ -65,6 +72,10 @@ export async function getRequestyModels(
 				modelInfo.supportsReasoningBudget = true
 				modelInfo.supportsReasoningBinary = true
 				modelInfo.supportsTemperature = false
+			}
+
+			if (REQUESTY_SUMMARIZING_MODELS.has(rawModel.id)) {
+				modelInfo.summarizesTextBetweenToolCalls = true
 			}
 
 			models[rawModel.id] = modelInfo

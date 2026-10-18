@@ -19,6 +19,13 @@ const VERCEL_ANTHROPIC_NO_TEMPERATURE_MODELS = new Set([
 	"anthropic/claude-haiku-5.5",
 ])
 
+// Their text between tool calls only summarizes, so they are offered `send_user_message`.
+const VERCEL_ANTHROPIC_SUMMARIZING_MODELS = new Set([
+	"anthropic/claude-fable-5.1",
+	"anthropic/claude-fable-5",
+	"anthropic/claude-opus-5-5",
+])
+
 /**
  * VercelAiGatewayPricing
  */
@@ -157,6 +164,10 @@ export const parseVercelAiGatewayModel = ({ id, model }: { id: string; model: Ve
 
 	if (VERCEL_ANTHROPIC_NO_TEMPERATURE_MODELS.has(id)) {
 		modelInfo.supportsTemperature = false
+	}
+
+	if (VERCEL_ANTHROPIC_SUMMARIZING_MODELS.has(id)) {
+		modelInfo.summarizesTextBetweenToolCalls = true
 	}
 
 	return modelInfo

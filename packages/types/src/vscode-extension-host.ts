@@ -578,6 +578,7 @@ export interface WebviewMessage {
 		| "newTask"
 		| "askResponse"
 		| "terminalOperation"
+		| "abortMcpExecution"
 		| "clearTask"
 		| "didShowAnnouncement"
 		| "selectImages"
@@ -806,6 +807,7 @@ export interface WebviewMessage {
 	diagnostics?: WebviewDiagnosticsSnapshot
 	ids?: string[]
 	terminalOperation?: "continue" | "abort"
+	executionId?: string // For abortMcpExecution
 	messageTs?: number
 	timestamp?: number // For webviewHeartbeat
 	messageId?: string

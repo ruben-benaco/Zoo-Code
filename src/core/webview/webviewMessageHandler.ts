@@ -15,6 +15,7 @@ import {
 	type ProviderSettings,
 	type Command as SlashCommand,
 	type WebviewMessage,
+	type TaskConversationMatch,
 	TelemetryEventName,
 	RooCodeSettings,
 	ExperimentId,
@@ -41,6 +42,7 @@ import { type ApiMessage } from "../task-persistence/apiMessages"
 import { saveTaskMessages } from "../task-persistence"
 import { isInvalidDisplayValue } from "../config/displaySettings"
 import { importRooTaskHistory } from "../task-persistence/importRooTaskHistory"
+import { searchTaskConversations } from "../task-persistence/searchTaskConversations"
 
 import { ClineProvider } from "./ClineProvider"
 import { findOriginalContent } from "./stripOriginalContent"
@@ -988,6 +990,28 @@ export const webviewMessageHandler = async (
 		case "showTaskWithId":
 			await provider.showTaskWithId(message.text!)
 			break
+		case "searchTaskConversations": {
+			let taskConversationMatches: TaskConversationMatch[] = []
+			try {
+				const { getStorageBasePath } = await import("../../utils/storage")
+				const basePath = await getStorageBasePath(provider.contextProxy.globalStorageUri.fsPath)
+				taskConversationMatches = await searchTaskConversations(
+					path.join(basePath, "tasks"),
+					message.ids ?? [],
+					message.query ?? "",
+				)
+			} catch (error) {
+				provider.log(
+					`[searchTaskConversations] Failed: ${error instanceof Error ? error.message : String(error)}`,
+				)
+			}
+			await provider.postMessageToWebview({
+				type: "taskConversationSearchResults",
+				requestId: message.requestId,
+				taskConversationMatches,
+			})
+			break
+		}
 		case "condenseTaskContextRequest":
 			await provider.condenseTaskContext(message.text!)
 			break

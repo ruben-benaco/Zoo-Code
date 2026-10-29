@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import type { GlobalSettings, RooCodeSettings } from "./global-settings.js"
 import type { ProviderSettings, ProviderSettingsEntry } from "./provider-settings.js"
-import type { HistoryItem } from "./history.js"
+import type { HistoryItem, TaskConversationMatch } from "./history.js"
 import type { ModeConfig, PromptComponent } from "./mode.js"
 import type { Experiments } from "./experiment.js"
 import type { ClineMessage, MentionSegment, QueuedMessage } from "./message.js"
@@ -143,7 +143,10 @@ export interface ExtensionMessage {
 		| "rooHistoryImportProgress"
 		| "themeFixtureProbeRequest"
 		| "diagnosticsRequest"
+		| "taskConversationSearchResults"
 	text?: string
+	/** For taskConversationSearchResults; correlated via `requestId` */
+	taskConversationMatches?: TaskConversationMatch[]
 	/** For fileContent: { path, content, error? } */
 	fileContent?: { path: string; content: string | null; error?: string }
 	/** For originalContent: the pre-edit file content of the requested tool message (null when unavailable) */
@@ -585,6 +588,7 @@ export interface WebviewMessage {
 		| "exportCurrentTask"
 		| "shareCurrentTask"
 		| "showTaskWithId"
+		| "searchTaskConversations"
 		| "deleteTaskWithId"
 		| "abandonSubtaskWithId"
 		| "exportTaskWithId"

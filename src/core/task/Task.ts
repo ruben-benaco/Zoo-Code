@@ -4299,6 +4299,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				let cacheWriteTokens = 0
 				let cacheWrite1hTokens = 0
 				let cacheWrite12hTokens = 0
+				let cacheInvalidationCost: number | undefined
+				let cacheExpiresAt: number | undefined
 				let cacheReadTokens = 0
 				let inputTokens = 0
 				let outputTokens = 0
@@ -4354,6 +4356,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 						tokensOut: costResult.totalOutputTokens,
 						cacheWrites: cacheWriteTokens,
 						cacheReads: cacheReadTokens,
+						cacheInvalidationCost,
+						cacheExpiresAt,
 						cost: totalCost ?? costResult.totalCost,
 						cancelReason,
 						streamingFailedMessage,
@@ -4518,6 +4522,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 								cacheWrite12hTokens += chunk.cacheWrite12hTokens ?? 0
 								cacheReadTokens += chunk.cacheReadTokens ?? 0
 								totalCost = chunk.totalCost
+								cacheInvalidationCost = chunk.cacheInvalidationCost
+								cacheExpiresAt = chunk.cacheExpiresAt
 								// Read from the accumulators, so a provider that splits usage
 								// across chunks still yields the total.
 								this.streamDiagnostics.usage = { inputTokens, outputTokens }

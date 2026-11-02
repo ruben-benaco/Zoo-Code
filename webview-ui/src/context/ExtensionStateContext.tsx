@@ -292,6 +292,7 @@ export const createInitialExtensionState = (): ExtensionState => ({
 	terminalProfile: undefined, // Default VS Code terminal profile (use VS Code default)
 	historyPreviewCollapsed: false, // Initialize the new state (default to expanded)
 	reasoningBlockCollapsed: true, // Default to collapsed
+	showCacheCountdown: true, // Default to showing the cache countdown
 	enterBehavior: "send", // Default: Enter sends, Shift+Enter creates newline
 	cloudUserInfo: null,
 	cloudIsAuthenticated: false,
@@ -658,6 +659,7 @@ export const ExtensionStateContextProvider: React.FC<{
 		dateFormat: state.dateFormat ?? "auto",
 		showRelativeTimes: state.showRelativeTimes ?? true,
 		reasoningBlockCollapsed: state.reasoningBlockCollapsed ?? true,
+		showCacheCountdown: state.showCacheCountdown ?? true,
 		didHydrateState,
 		showWelcome,
 		theme,

@@ -380,6 +380,7 @@ export type ExtensionState = Pick<
 	| "taskTitleGenerationEnabled"
 	| "taskTitleApiConfigId"
 	| "reasoningBlockCollapsed"
+	| "showCacheCountdown"
 	| "chatFontSize"
 	| "timeFormat"
 	| "dateFormat"
@@ -1044,6 +1045,8 @@ export interface ClineApiReqInfo {
 	tokensOut?: number
 	cacheWrites?: number
 	cacheReads?: number
+	cacheInvalidationCost?: number
+	cacheExpiresAt?: number
 	cost?: number
 	cancelReason?: ClineApiReqCancelReason
 	streamingFailedMessage?: string

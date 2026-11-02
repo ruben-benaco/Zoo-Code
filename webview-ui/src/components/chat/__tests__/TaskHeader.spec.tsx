@@ -46,6 +46,7 @@ const mockExtensionState: {
 	taskHistory: any[]
 	timeFormat?: "auto" | "12h" | "24h"
 	dateFormat?: "auto" | "mdy" | "dmy" | "ymd"
+	showCacheCountdown?: boolean
 } = {
 	apiConfiguration: {
 		apiProvider: providerIdentifiers.anthropic,
@@ -109,6 +110,16 @@ describe("TaskHeader", () => {
 	const renderTaskHeader = (props: Partial<TaskHeaderProps> = {}) => {
 		return renderWithExtensionState(<TaskHeader {...defaultProps} {...props} />)
 	}
+
+	it.each([
+		[true, true],
+		[false, false],
+	])("collapsed cache countdown visible=%s when showCacheCountdown=%s", (visible, setting) => {
+		mockExtensionState.showCacheCountdown = setting
+		renderTaskHeader({ cacheExpiresAt: Date.now() + 4 * 60_000 })
+		expect(screen.queryByText(/^[34]:\d\d$/) !== null).toBe(visible)
+		delete mockExtensionState.showCacheCountdown
+	})
 
 	it("should display cost when totalCost is greater than 0", () => {
 		renderTaskHeader()

@@ -517,6 +517,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							}
 							break
 						case "mcp_server_request_started":
+							// The request only starts after approval, so a still-visible approval prompt is stale.
+							if (clineAskRef.current === "use_mcp_server") {
+								setClineAsk(undefined)
+								setEnableButtons(false)
+								setPrimaryButtonKey(undefined)
+								setSecondaryButtonKey(undefined)
+							}
+							break
 						case "mcp_server_response":
 						case "completion_result":
 							break

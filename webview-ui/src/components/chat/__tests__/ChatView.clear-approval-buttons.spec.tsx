@@ -105,6 +105,7 @@ vi.mock("react-i18next", () => ({
 }))
 
 const RUN_BUTTON_LABEL = "chat:runCommand.title"
+const APPROVE_BUTTON_LABEL = "chat:approve.title"
 const DENY_BUTTON_LABEL = "chat:reject.title"
 const RESUME_BUTTON_LABEL = "chat:resumeTask.title"
 const START_NEW_TASK_BUTTON_LABEL = "chat:startNewTask.title"
@@ -181,7 +182,42 @@ const askOnlyCompletionWithCheckpoint = (): ClineMessage[] => [
 	{ type: "ask", ask: "completion_result", ts: 3, text: "Task complete", partial: false },
 ]
 
+const mcpAsk = (): ClineMessage[] => [
+	{ type: "say", say: "task", ts: 1, text: "Initial task" },
+	{
+		type: "ask",
+		ask: "use_mcp_server",
+		ts: 2,
+		text: JSON.stringify({ type: "use_mcp_tool", serverName: "srv", toolName: "run_command" }),
+		partial: false,
+	},
+]
+
 describe("ChatView approval button behavior", () => {
+	it("clears MCP Approve/Deny once the request starts after a queued approval", async () => {
+		const { queryByText } = renderChatView()
+
+		await act(async () => {
+			hydrateState(mcpAsk())
+		})
+		await waitFor(() => {
+			expect(queryByText(APPROVE_BUTTON_LABEL)).toBeInTheDocument()
+			expect(queryByText(DENY_BUTTON_LABEL)).toBeInTheDocument()
+		})
+
+		await act(async () => {
+			hydrateState([
+				...mcpAsk(),
+				{ type: "say", say: "user_feedback", ts: 3, text: "queued message" },
+				{ type: "say", say: "mcp_server_request_started", ts: 4 },
+			])
+		})
+		await waitFor(() => {
+			expect(queryByText(APPROVE_BUTTON_LABEL)).not.toBeInTheDocument()
+			expect(queryByText(DENY_BUTTON_LABEL)).not.toBeInTheDocument()
+		})
+	})
+
 	beforeEach(() => vi.clearAllMocks())
 
 	describe("queued message segments", () => {

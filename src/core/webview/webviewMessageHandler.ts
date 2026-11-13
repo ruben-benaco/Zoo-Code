@@ -120,6 +120,7 @@ const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
 let telemetrySettingQueue: Promise<void> = Promise.resolve()
 
 import { MarketplaceManager, MarketplaceItemType } from "../../services/marketplace"
+import { showMcpOutputChannel } from "../../services/mcp/stderrLog"
 import { setPendingTodoList } from "../tools/UpdateTodoListTool"
 import {
 	handleListWorktrees,
@@ -2077,6 +2078,10 @@ export const webviewMessageHandler = async (
 					`Failed to retry connection for ${message.text}: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
 				)
 			}
+			break
+		}
+		case "showMcpOutputChannel": {
+			showMcpOutputChannel()
 			break
 		}
 		case "toggleToolAlwaysAllow": {

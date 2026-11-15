@@ -2225,7 +2225,10 @@ export class McpHub {
 		}
 		this.isProgrammaticUpdate = true
 		try {
-			await safeWriteJson(configPath, updatedConfig, { prettyPrint: true })
+			await safeWriteJson(configPath, updatedConfig, {
+				prettyPrint: true,
+				trailingNewline: content.endsWith("\n"),
+			})
 		} finally {
 			// Reset flag after watcher debounce period (non-blocking)
 			this.flagResetTimer = setTimeout(() => {
@@ -2310,7 +2313,10 @@ export class McpHub {
 					mcpServers: config.mcpServers,
 				}
 
-				await safeWriteJson(configPath, updatedConfig, { prettyPrint: true })
+				await safeWriteJson(configPath, updatedConfig, {
+					prettyPrint: true,
+					trailingNewline: content.endsWith("\n"),
+				})
 
 				// Update server connections with the correct source
 				await this.updateServerConnections(config.mcpServers, serverSource)
@@ -2530,7 +2536,10 @@ export class McpHub {
 			}
 			this.isProgrammaticUpdate = true
 			try {
-				await safeWriteJson(normalizedPath, config, { prettyPrint: true })
+				await safeWriteJson(normalizedPath, config, {
+					prettyPrint: true,
+					trailingNewline: content.endsWith("\n"),
+				})
 			} finally {
 				// Reset flag after watcher debounce period (non-blocking)
 				this.flagResetTimer = setTimeout(() => {

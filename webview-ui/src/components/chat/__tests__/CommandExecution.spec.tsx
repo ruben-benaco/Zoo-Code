@@ -46,6 +46,13 @@ vi.mock("../CommandPatternSelector", () => ({
 	),
 }))
 
+vi.mock("../CancelWithReason", () => ({
+	AbortButtonWithReason: ({ executionId, onAbort }: { executionId: string; onAbort: () => void }) => (
+		<button data-testid="abort-button" data-execution-id={executionId} onClick={onAbort} />
+	),
+	CancelTooLateNotice: () => null,
+}))
+
 // Mock ExtensionStateContext
 const mockExtensionState = {
 	terminalShellIntegrationDisabled: false,
@@ -657,6 +664,40 @@ Output:
 	})
 
 	describe("running status indicator", () => {
+		// Since useEvent is mocked as a no-op vi.fn(), the component's onMessage
+		// handler is recorded in mock.calls[last][1]. We invoke it directly to
+		// simulate an incoming extension message. event.data must be an
+		// ExtensionMessage with type "commandExecutionStatus" and text holding
+		// the JSON-serialised CommandExecutionStatus payload.
+		const sendStatusMessage = (executionId: string, payload: Record<string, unknown>) => {
+			const mockedUseEvent = useEvent as unknown as ReturnType<typeof vi.fn>
+			const lastCall = mockedUseEvent.mock.calls[mockedUseEvent.mock.calls.length - 1]
+			const handler = lastCall?.[1] as ((e: MessageEvent) => void) | undefined
+			const data = { type: "commandExecutionStatus", text: JSON.stringify({ executionId, ...payload }) }
+			handler?.(new MessageEvent("message", { data }))
+		}
+
+		it("offers abort (with reason) for its execution while running", async () => {
+			render(
+				<ExtensionStateWrapper>
+					<CommandExecution executionId="exec-abort" text="npm start" />
+				</ExtensionStateWrapper>,
+			)
+			expect(screen.queryByTestId("abort-button")).toBeNull()
+
+			await act(async () => {
+				sendStatusMessage("exec-abort", { status: "started", command: "npm start" })
+			})
+			fireEvent.click(screen.getByTestId("abort-button"))
+
+			expect(screen.getByTestId("abort-button")).toHaveAttribute("data-execution-id", "exec-abort")
+			expect(vscode.postMessage).toHaveBeenCalledWith({ type: "terminalOperation", terminalOperation: "abort" })
+
+			await act(async () => {
+				sendStatusMessage("exec-abort", { status: "exited", exitCode: 130 })
+			})
+		})
+
 		it("should show the pulsing dot when status is started", async () => {
 			render(
 				<ExtensionStateWrapper>

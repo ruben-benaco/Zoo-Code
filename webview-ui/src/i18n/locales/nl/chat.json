@@ -249,6 +249,16 @@
 		"pid": "(PID: {{pid}})",
 		"clickToEditPattern": "Klik om het patroon te bewerken"
 	},
+	"cancelWithReason": {
+		"menuTooltip": "Meer afbreekopties",
+		"menuItem": "Afbreken met reden…",
+		"title": "Afbreken met reden",
+		"description": "Dit stopt het en stuurt je reden samen met het resultaat naar het model.",
+		"placeholder": "Waarom breek je af? Wat moet er in plaats daarvan gebeuren?",
+		"keepRunning": "Laten doorlopen",
+		"submit": "Afbreken en versturen",
+		"tooLate": "Afbreken met reden had geen effect: het was al klaar. Je reden is teruggezet in het chatinvoerveld."
+	},
 	"text": {
 		"rooSaid": "Zoo zei",
 		"rooProgressUpdate": "Zoo (voortgangsupdate)",

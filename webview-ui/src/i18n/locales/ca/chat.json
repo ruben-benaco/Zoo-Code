@@ -255,6 +255,16 @@
 		"pid": "(PID: {{pid}})",
 		"clickToEditPattern": "Fes clic per editar el patró"
 	},
+	"cancelWithReason": {
+		"menuTooltip": "Més opcions d'avortament",
+		"menuItem": "Avorta amb motiu…",
+		"title": "Avorta amb motiu",
+		"description": "Això l'atura i envia el teu motiu al model juntament amb el resultat.",
+		"placeholder": "Per què avortes? Què hauria de passar en canvi?",
+		"keepRunning": "Deixa'l continuar",
+		"submit": "Avorta i envia",
+		"tooLate": "Avortar amb motiu no ha tingut cap efecte: ja havia acabat. El teu motiu s'ha tornat a posar al camp d'entrada del xat."
+	},
 	"text": {
 		"rooSaid": "En Zoo ha dit",
 		"rooProgressUpdate": "Zoo (actualització de progrés)",

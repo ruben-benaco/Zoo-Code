@@ -260,6 +260,16 @@
 		"pid": "(PID: {{pid}})",
 		"clickToEditPattern": "Kliknij, aby edytować wzorzec"
 	},
+	"cancelWithReason": {
+		"menuTooltip": "Więcej opcji przerwania",
+		"menuItem": "Przerwij z podaniem powodu…",
+		"title": "Przerwij z podaniem powodu",
+		"description": "To zatrzymuje działanie i wysyła twój powód do modelu razem z wynikiem.",
+		"placeholder": "Dlaczego przerywasz? Co powinno się stać zamiast tego?",
+		"keepRunning": "Pozwól działać",
+		"submit": "Przerwij i wyślij",
+		"tooLate": "Przerwanie z powodem nie zadziałało: proces już się zakończył. Twój powód został wstawiony z powrotem do pola czatu."
+	},
 	"text": {
 		"rooSaid": "Zoo powiedział",
 		"rooProgressUpdate": "Zoo (aktualizacja postępu)",

@@ -303,6 +303,16 @@
 		"pid": "(PID: {{pid}})",
 		"clickToEditPattern": "Klik untuk menyunting pola"
 	},
+	"cancelWithReason": {
+		"menuTooltip": "Opsi pembatalan lainnya",
+		"menuItem": "Batalkan dengan alasan…",
+		"title": "Batalkan dengan alasan",
+		"description": "Ini menghentikannya dan mengirim alasanmu ke model bersama hasilnya.",
+		"placeholder": "Kenapa kamu membatalkan? Apa yang seharusnya terjadi?",
+		"keepRunning": "Biarkan berjalan",
+		"submit": "Batalkan dan kirim",
+		"tooLate": "Pembatalan dengan alasan tidak berpengaruh: prosesnya sudah selesai. Alasanmu dikembalikan ke kolom input chat."
+	},
 	"text": {
 		"rooSaid": "Zoo berkata",
 		"rooProgressUpdate": "Zoo (pembaruan progres)",

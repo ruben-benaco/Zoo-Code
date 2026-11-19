@@ -18,7 +18,16 @@
 		"openApiHistory": "Open API History",
 		"openUiHistory": "Open UI History",
 		"backToParentTask": "Parent task",
-		"waitingOnSubtask": "Waiting on subtask"
+		"waitingOnSubtask": "Waiting on subtask",
+		"allowedCommands": {
+			"title": "Allowed commands ({{count}})",
+			"description": "These exact commands run without approval for the rest of this task.",
+			"inDirectory": "in {{cwd}}",
+			"revoke": "Revoke",
+			"revokeTooltip": "Revoke, and tell the model that this command needs approval again",
+			"moreRevokeOptions": "More revoke options",
+			"revokeSilently": "Revoke without telling model"
+		}
 	},
 	"unpin": "Unpin",
 	"pin": "Pin",
@@ -95,6 +104,10 @@
 	"runCommand": {
 		"title": "Run",
 		"tooltip": "Execute this command"
+	},
+	"runCommandAllowForTask": {
+		"title": "Run + allow for task",
+		"tooltip": "Execute this command, and run this exact command again without asking for the rest of this task"
 	},
 	"proceedWhileRunning": {
 		"title": "Continue While Running",

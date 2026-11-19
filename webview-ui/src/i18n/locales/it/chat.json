@@ -15,7 +15,16 @@
 		"openApiHistory": "Apri cronologia API",
 		"openUiHistory": "Apri cronologia UI",
 		"backToParentTask": "Attività principale",
-		"waitingOnSubtask": "In attesa di sottoattività"
+		"waitingOnSubtask": "In attesa di sottoattività",
+		"allowedCommands": {
+			"title": "Comandi consentiti ({{count}})",
+			"description": "Questi comandi esatti vengono eseguiti senza approvazione per il resto dell'attività.",
+			"inDirectory": "in {{cwd}}",
+			"revoke": "Revoca",
+			"revokeTooltip": "Revoca e comunica al modello che questo comando richiede di nuovo l'approvazione",
+			"moreRevokeOptions": "Altre opzioni di revoca",
+			"revokeSilently": "Revoca senza avvisare il modello"
+		}
 	},
 	"unpin": "Rilascia",
 	"pin": "Fissa",
@@ -69,6 +78,10 @@
 	"runCommand": {
 		"title": "Comando",
 		"tooltip": "Esegui questo comando"
+	},
+	"runCommandAllowForTask": {
+		"title": "Esegui + consenti per l'attività",
+		"tooltip": "Esegui questo comando e riesegui esattamente questo comando senza chiedere per il resto dell'attività"
 	},
 	"proceedWhileRunning": {
 		"title": "Procedi durante l'esecuzione",

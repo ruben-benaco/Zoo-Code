@@ -15,7 +15,16 @@
 		"openApiHistory": "Abrir historial de API",
 		"openUiHistory": "Abrir historial de UI",
 		"backToParentTask": "Tarea principal",
-		"waitingOnSubtask": "Esperando subtarea"
+		"waitingOnSubtask": "Esperando subtarea",
+		"allowedCommands": {
+			"title": "Comandos permitidos ({{count}})",
+			"description": "Estos comandos exactos se ejecutan sin aprobación durante el resto de la tarea.",
+			"inDirectory": "en {{cwd}}",
+			"revoke": "Revocar",
+			"revokeTooltip": "Revocar y avisar al modelo de que este comando vuelve a necesitar aprobación",
+			"moreRevokeOptions": "Más opciones para revocar",
+			"revokeSilently": "Revocar sin avisar al modelo"
+		}
 	},
 	"unpin": "Desfijar",
 	"pin": "Fijar",
@@ -69,6 +78,10 @@
 	"runCommand": {
 		"title": "Comando",
 		"tooltip": "Ejecutar este comando"
+	},
+	"runCommandAllowForTask": {
+		"title": "Ejecutar + permitir en la tarea",
+		"tooltip": "Ejecuta este comando y vuelve a ejecutar exactamente este comando sin preguntar durante el resto de la tarea"
 	},
 	"proceedWhileRunning": {
 		"title": "Continuar mientras se ejecuta",

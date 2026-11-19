@@ -58,6 +58,7 @@ import {
 	countEnabledMcpTools,
 	providerIdentifiers,
 	type MentionSegment,
+	type TaskAllowedCommand,
 } from "@roo-code/types"
 import { TelemetryService } from "@roo-code/telemetry"
 import { CloudService } from "@roo-code/cloud"
@@ -102,6 +103,7 @@ import { logger } from "../../utils/logging"
 
 // prompts
 import { formatResponse } from "../prompts/responses"
+import { TaskCommandAllowlist } from "./TaskCommandAllowlist"
 import { SYSTEM_PROMPT } from "../prompts/system"
 import { partitionDisabledToolsForProtocol } from "../prompts/tools/effective-tool-policy"
 import { buildNativeToolsArrayWithRestrictions } from "./build-tools"
@@ -474,6 +476,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	private askResponseText?: string
 	private askResponseImages?: string[]
 	private askResponseSegments?: MentionSegment[]
+	/** The user answered the current command ask with "Run + allow for task". */
+	private askResponseAllowCommandForTask = false
 	/**
 	 * Structured detail of the automatic denial that resolved the current ask,
 	 * set when `checkAutoApproval` denies via policy (denylist, blanket
@@ -769,6 +773,11 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	private readonly initialStatus?: "active" | "delegated" | "completed" | "interrupted"
 	private pendingAction?: PendingTaskAction
 
+	/** Commands the user allowed to run without approval for the rest of this task. */
+	readonly commandAllowlist: TaskCommandAllowlist
+	/** Text blocks for the model, sent with the next user message added to the API history. */
+	private pendingModelNotices: { text: string; revokedCommand?: TaskAllowedCommand }[] = []
+
 	// MessageManager for high-level message operations (lazy initialized)
 	private _messageManager?: MessageManager
 
@@ -870,6 +879,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.taskNumber = taskNumber
 		this.initialStatus = initialStatus ?? historyItem?.status
 		this.pendingAction = historyItem?.pendingAction
+		this.commandAllowlist = new TaskCommandAllowlist(historyItem?.taskAllowedCommands)
 
 		// Store the task's mode and API config name when it's created.
 		// For history items, use the stored values; for new tasks, we'll set them
@@ -1991,6 +2001,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				mode: this._taskMode || defaultModeSlug, // Use the task's own mode, not the current provider mode.
 				apiConfigName: this._taskApiConfigName, // Use the task's own provider profile, not the current provider profile.
 				initialStatus: this.initialStatus,
+				taskAllowedCommands: this.commandAllowlist.toPersisted(),
 			})
 
 			// Emit token/tool usage updates using debounced function
@@ -2084,6 +2095,14 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// has to see and stalling a hands-free session. Leaving the message
 		// unclaimed lets the policy decision stand and keeps the message queued.
 		const queueMayAnswerThisAsk = !(blanketDenyEngaged && type === "command")
+		const commandCwd = type === "command" ? autoApprovalContext?.commandCwd : undefined
+		const taskAllowEntry =
+			commandCwd !== undefined && text !== undefined && partial !== true && !isProtected
+				? { command: text, cwd: commandCwd }
+				: undefined
+		// An allowed command is approved below without involving the queue, so
+		// a queued message must stay queued instead of answering this ask.
+		const isTaskAllowedCommand = taskAllowEntry !== undefined && this.commandAllowlist.has(taskAllowEntry)
 		// A queued message must not short-circuit protected asks (e.g.
 		// DCG-blocked commands): claiming one here skips checkAutoApproval, and
 		// the drain below would auto-approve what protection intentionally
@@ -2092,6 +2111,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			partial === true ||
 			type === "command_output" ||
 			isProtected ||
+			isTaskAllowedCommand ||
 			!queueMayAnswerThisAsk ||
 			!this.mayDrainQueuedMessageForAsk()
 				? undefined
@@ -2101,7 +2121,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// The path inside `text` was made relative to this task's workspace,
 		// which for a resumed or child task need not be the one the provider
 		// currently reports.
-		const approval = queuedAskResolution
+		const policyApproval = queuedAskResolution
 			? ({ decision: "ask" } as const)
 			: await checkAutoApproval({
 					state,
@@ -2111,6 +2131,13 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					isProtected,
 					dcgDecision: autoApprovalContext?.dcgDecision,
 				})
+		// The task allow list only stands in for the user's click: it never
+		// overrides a policy denial (denylist, blanket auto-deny, DCG).
+		const approval =
+			isTaskAllowedCommand && policyApproval.decision === "ask"
+				? ({ decision: "approve" } as const)
+				: policyApproval
+		const requestsTaskAllow = taskAllowEntry !== undefined && autoApprovalContext?.requestsTaskAllow === true
 		const isAutoAnswered = approval.decision === "approve" || approval.decision === "deny"
 		const autoApprovalDecision = isAutoAnswered ? approval.decision : undefined
 		// Command asks are excluded: their queued approval still awaits a policy re-check that may release or deny it.
@@ -2161,6 +2188,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					this.askResponse = undefined
 					this.askResponseText = undefined
 					this.askResponseImages = undefined
+					this.askResponseAllowCommandForTask = false
 
 					// Bug for the history books:
 					// In the webview we use the ts as the chatrow key for the
@@ -2179,6 +2207,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					lastMessage.partial = false
 					lastMessage.progressStatus = progressStatus
 					lastMessage.isProtected = isProtected
+					lastMessage.requestsTaskAllow = requestsTaskAllow || undefined
 					if (isAnsweredOnInsert) {
 						lastMessage.isAnswered = true
 						lastMessage.autoApprovalDecision = autoApprovalDecision
@@ -2194,6 +2223,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					this.askResponse = undefined
 					this.askResponseText = undefined
 					this.askResponseImages = undefined
+					this.askResponseAllowCommandForTask = false
 					askTs = Date.now()
 					this.lastMessageTs = askTs
 					await this.addToClineMessages({
@@ -2202,6 +2232,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 						ask: type,
 						text,
 						isProtected,
+						requestsTaskAllow: requestsTaskAllow || undefined,
 						isAnswered: isAnsweredOnInsert || undefined,
 						autoApprovalDecision,
 					})
@@ -2212,6 +2243,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			this.askResponse = undefined
 			this.askResponseText = undefined
 			this.askResponseImages = undefined
+			this.askResponseAllowCommandForTask = false
 			askTs = Date.now()
 			this.lastMessageTs = askTs
 			await this.addToClineMessages({
@@ -2220,6 +2252,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				ask: type,
 				text,
 				isProtected,
+				requestsTaskAllow: requestsTaskAllow || undefined,
 				isAnswered: isAnsweredOnInsert || undefined,
 				autoApprovalDecision,
 			})
@@ -2564,11 +2597,17 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				queuedMessageId,
 				autoDenyDetail: this.pendingAutoDenyDetail,
 			}
+			const allowCommandForTask = this.askResponseAllowCommandForTask
 			this.askResponse = undefined
 			this.askResponseText = undefined
 			this.askResponseImages = undefined
 			this.askResponseSegments = undefined
+			this.askResponseAllowCommandForTask = false
 			this.pendingAutoDenyDetail = undefined
+
+			if (allowCommandForTask && result.response === "yesButtonClicked" && taskAllowEntry) {
+				await this.allowCommandForTask(taskAllowEntry)
+			}
 
 			// Switch back to an active state.
 			if (this.idleAsk || this.resumableAsk || this.interactiveAsk) {
@@ -2595,6 +2634,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		text?: string,
 		images?: string[],
 		segments?: MentionSegment[],
+		options: { allowCommandForTask?: boolean } = {},
 	) {
 		// Clear any pending auto-approval timeout when user responds
 		this.cancelAutoApprovalTimeout()
@@ -2603,6 +2643,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.askResponseText = text
 		this.askResponseImages = images
 		this.askResponseSegments = segments
+		this.askResponseAllowCommandForTask = askResponse === "yesButtonClicked" && options.allowCommandForTask === true
 
 		// Create a checkpoint whenever the user sends a message.
 		// Use allowEmpty=true to ensure a checkpoint is recorded even if there are no file changes.
@@ -2656,6 +2697,40 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			clearTimeout(this.autoApprovalTimeoutRef)
 			this.autoApprovalTimeoutRef = undefined
 		}
+	}
+
+	/**
+	 * Allows an exact command (text and resolved working directory) to run
+	 * without approval for the rest of this task.
+	 */
+	public async allowCommandForTask(entry: TaskAllowedCommand): Promise<void> {
+		// A revocation notice still waiting to be sent would arrive after the
+		// tool result announcing this grant, and tell the model the opposite.
+		this.pendingModelNotices = this.pendingModelNotices.filter(
+			(notice) => !(notice.revokedCommand?.command === entry.command && notice.revokedCommand.cwd === entry.cwd),
+		)
+		if (this.commandAllowlist.add(entry)) {
+			await this.saveClineMessages()
+		}
+	}
+
+	/**
+	 * Revokes a command allowed with {@link allowCommandForTask}.
+	 *
+	 * With `notifyModel`, the model is told with its next user message, so it
+	 * does not go on assuming the command runs without approval.
+	 */
+	public async revokeAllowedCommand(entry: TaskAllowedCommand, { notifyModel }: { notifyModel: boolean }) {
+		if (!this.commandAllowlist.remove(entry)) {
+			return
+		}
+		if (notifyModel) {
+			this.pendingModelNotices.push({
+				text: formatResponse.commandAllowForTaskRevoked(entry.command, entry.cwd.toPosix()),
+				revokedCommand: { ...entry },
+			})
+		}
+		await this.saveClineMessages()
 	}
 
 	public approveAsk({ text, images }: { text?: string; images?: string[] } = {}) {
@@ -4272,7 +4347,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 			// Add environment details as its own text block, separate from tool
 			// results.
-			const finalUserContent = [...contentWithoutEnvDetails, { type: "text" as const, text: environmentDetails }]
+			const notices = [...this.pendingModelNotices]
+			const finalUserContent = [
+				...contentWithoutEnvDetails,
+				...notices.map((notice) => ({ type: "text" as const, text: notice.text })),
+				{ type: "text" as const, text: environmentDetails },
+			]
 			// See shouldAddUserMessageToHistory for the full add/skip rules (retry/empty/removed).
 			const isEmptyUserContent = currentUserContent.length === 0
 			const shouldAddUserMessage = shouldAddUserMessageToHistory({
@@ -4283,6 +4363,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			if (shouldAddUserMessage) {
 				await this.addToApiConversationHistory({ role: "user", content: finalUserContent })
 				this.messageCounts.user++
+				this.pendingModelNotices = this.pendingModelNotices.filter((notice) => !notices.includes(notice))
 			}
 
 			// Since we sent off a placeholder api_req_started message to update the

@@ -15,7 +15,16 @@
 		"openApiHistory": "API Geçmişini Aç",
 		"openUiHistory": "UI Geçmişini Aç",
 		"backToParentTask": "Üst görev",
-		"waitingOnSubtask": "Alt görev bekleniyor"
+		"waitingOnSubtask": "Alt görev bekleniyor",
+		"allowedCommands": {
+			"title": "İzin verilen komutlar ({{count}})",
+			"description": "Bu komutlar, görevin geri kalanında birebir aynı olduklarında onay olmadan çalışır.",
+			"inDirectory": "{{cwd}} içinde",
+			"revoke": "İptal et",
+			"revokeTooltip": "İptal et ve modele bu komutun yeniden onay gerektirdiğini bildir",
+			"moreRevokeOptions": "Diğer iptal seçenekleri",
+			"revokeSilently": "Modele bildirmeden iptal et"
+		}
 	},
 	"unpin": "Sabitlemeyi iptal et",
 	"pin": "Sabitle",
@@ -68,6 +77,10 @@
 	"runCommand": {
 		"title": "Komut",
 		"tooltip": "Bu komutu çalıştır"
+	},
+	"runCommandAllowForTask": {
+		"title": "Çalıştır + görev için izin ver",
+		"tooltip": "Bu komutu çalıştır ve görevin geri kalanında tam olarak bu komutu sormadan yeniden çalıştır"
 	},
 	"proceedWhileRunning": {
 		"title": "Çalışırken Devam Et",

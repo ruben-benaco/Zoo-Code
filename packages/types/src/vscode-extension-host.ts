@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import type { GlobalSettings, RooCodeSettings } from "./global-settings.js"
 import type { ProviderSettings, ProviderSettingsEntry } from "./provider-settings.js"
-import type { HistoryItem, TaskConversationMatch } from "./history.js"
+import type { HistoryItem, TaskAllowedCommand, TaskConversationMatch } from "./history.js"
 import type { ModeConfig, PromptComponent } from "./mode.js"
 import type { Experiments } from "./experiment.js"
 import type { ClineMessage, MentionSegment, QueuedMessage } from "./message.js"
@@ -581,6 +581,7 @@ export interface WebviewMessage {
 		| "webviewDidFocus"
 		| "newTask"
 		| "askResponse"
+		| "revokeTaskAllowedCommand"
 		| "terminalOperation"
 		| "abortMcpExecution"
 		| "clearTask"
@@ -771,6 +772,12 @@ export interface WebviewMessage {
 	context?: string
 	dataUri?: string
 	askResponse?: ClineAskResponse
+	/** With `askResponse: "yesButtonClicked"` on a command ask: also allow this exact command for the rest of the task. */
+	allowCommandForTask?: boolean
+	/** For `revokeTaskAllowedCommand`. */
+	taskAllowedCommand?: TaskAllowedCommand
+	/** For `revokeTaskAllowedCommand`: whether to tell the model that the allowance was revoked. */
+	notifyModel?: boolean
 	apiConfiguration?: ProviderSettings
 	images?: string[]
 	bool?: boolean

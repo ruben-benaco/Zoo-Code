@@ -26,6 +26,7 @@ import Thumbnails from "../common/Thumbnails"
 import { TaskTitleEditor } from "../history/TaskTitleEditor"
 import { TaskActions } from "./TaskActions"
 import { isShowableTimestamp, MessageTimestamp } from "./MessageTimestamp"
+import { TaskAllowedCommands } from "./TaskAllowedCommands"
 import { ContextWindowProgress } from "./ContextWindowProgress"
 import { Mention } from "./Mention"
 import { TodoListDisplay } from "./TodoListDisplay"
@@ -408,6 +409,14 @@ const TaskHeader = ({
 								onRename={isRenaming ? undefined : () => setIsRenaming(true)}
 							/>
 						</div>
+
+						{currentTaskItem && (
+							<TaskAllowedCommands
+								taskId={currentTaskItem.id}
+								commands={currentTaskItem.taskAllowedCommands ?? []}
+								workspace={currentTaskItem.workspace}
+							/>
+						)}
 
 						<div className="pt-3 mt-2 -mx-2.5 px-2.5 border-t border-vscode-sideBar-background">
 							<table className="w-full text-sm">

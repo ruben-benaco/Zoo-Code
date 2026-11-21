@@ -139,13 +139,15 @@ describe("ToolRouter with McpHub", () => {
 		},
 	)
 
-	it("fires the event before the settings read can fail", async () => {
+	it("fires the event and still updates the webview when the settings file is unreadable", async () => {
 		await fs.writeFile(path.join(directory, GlobalFileNames.mcpSettings), "{ not json")
 		const changed = vi.fn()
 		hub.onServerListChanged(changed)
-		addServer()
-		await expect(hub["notifyWebviewOfServerChanges"]()).rejects.toThrow()
+		const server = addServer()
+		post.mockClear()
+		await expect(hub["notifyWebviewOfServerChanges"]()).resolves.toBeUndefined()
 		expect(changed).toHaveBeenCalledTimes(1)
+		expect(post).toHaveBeenCalledWith({ type: "mcpServers", mcpServers: [server] })
 	})
 
 	it("fires the event and keeps going when the webview post rejects", async () => {

@@ -4,6 +4,7 @@
 		"invalid_settings_validation": "Format de configuració MCP no vàlid: {{errorMessages}}",
 		"create_json": "Ha fallat la creació o obertura de .roo/mcp.json: {{error}}",
 		"failed_update_project": "Ha fallat l'actualització dels servidors MCP del projecte",
+		"restart_config_unreadable": "No s'ha pogut reiniciar {{serverName}}: no s'ha pogut llegir la seva configuració: {{error}}",
 		"invalidJsonArgument": "Zoo ha intentat utilitzar {{toolName}} amb un argument JSON no vàlid. Tornant a intentar...",
 		"refresh_after_disable": "Ha fallat l'actualització de les connexions MCP després de desactivar",
 		"refresh_after_enable": "Ha fallat l'actualització de les connexions MCP després d'activar",

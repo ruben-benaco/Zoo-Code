@@ -4,6 +4,7 @@
 		"invalid_settings_validation": "Formato de configuración MCP no válido: {{errorMessages}}",
 		"create_json": "Error al crear o abrir .roo/mcp.json: {{error}}",
 		"failed_update_project": "Error al actualizar los servidores MCP del proyecto",
+		"restart_config_unreadable": "No se pudo reiniciar {{serverName}}: no se pudo leer su configuración: {{error}}",
 		"invalidJsonArgument": "Zoo intentó usar {{toolName}} con un argumento JSON no válido. Reintentando...",
 		"refresh_after_disable": "Error al actualizar las conexiones MCP después de desactivar",
 		"refresh_after_enable": "Error al actualizar las conexiones MCP después de activar",

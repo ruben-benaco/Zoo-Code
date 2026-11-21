@@ -50,6 +50,7 @@
 	"serverStatus": {
 		"retrying": "Retrying...",
 		"retryConnection": "Retry Connection",
+		"reloadTooltip": "Restart this server using the current settings from its MCP config file",
 		"showLogs": "Show Logs",
 		"lastStderr": "Last stderr output:"
 	},

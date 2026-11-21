@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "फिर से कोशिश कर रहा है...",
 		"retryConnection": "कनेक्शन फिर से आज़माएँ",
+		"reloadTooltip": "इस सर्वर को इसकी MCP कॉन्फ़िग फ़ाइल की वर्तमान सेटिंग्स के साथ पुनः आरंभ करें",
 		"showLogs": "लॉग दिखाएँ",
 		"lastStderr": "आखिरी stderr आउटपुट:"
 	},

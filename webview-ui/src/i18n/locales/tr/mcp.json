@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "Tekrar deneniyor...",
 		"retryConnection": "Bağlantıyı tekrar dene",
+		"reloadTooltip": "Bu sunucuyu MCP yapılandırma dosyasındaki güncel ayarlarla yeniden başlat",
 		"showLogs": "Günlükleri göster",
 		"lastStderr": "Son stderr çıktısı:"
 	},

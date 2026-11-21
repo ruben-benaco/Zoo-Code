@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "重试中...",
 		"retryConnection": "重试连接",
+		"reloadTooltip": "使用 MCP 配置文件中的当前设置重启此服务器",
 		"showLogs": "显示日志",
 		"lastStderr": "最近的 stderr 输出："
 	},

@@ -337,14 +337,17 @@ const ServerRow = ({ server, alwaysAllowMcp }: { server: McpServer; alwaysAllowM
 						style={{ marginRight: "8px" }}>
 						<span className="codicon codicon-trash" style={{ fontSize: "14px" }}></span>
 					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={handleRestart}
-						disabled={server.status === "connecting"}
-						style={{ marginRight: "8px" }}>
-						<span className="codicon codicon-refresh" style={{ fontSize: "14px" }}></span>
-					</Button>
+					<StandardTooltip content={t("mcp:serverStatus.reloadTooltip")}>
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={handleRestart}
+							disabled={server.status === "connecting"}
+							aria-label={t("mcp:serverStatus.reloadTooltip")}
+							style={{ marginRight: "8px" }}>
+							<span className="codicon codicon-refresh" style={{ fontSize: "14px" }}></span>
+						</Button>
+					</StandardTooltip>
 				</div>
 				<div
 					style={{

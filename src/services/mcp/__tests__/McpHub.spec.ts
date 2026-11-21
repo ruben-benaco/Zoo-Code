@@ -2777,6 +2777,81 @@ describe("McpHub", () => {
 		})
 	})
 
+	describe("restartConnection", () => {
+		const serverConfigFile = (args: string[]) =>
+			JSON.stringify({ mcpServers: { "reload-server": { type: "stdio", command: "node", args } } })
+
+		const createHubWithServer = async () => {
+			const stdioModule = await import("@modelcontextprotocol/sdk/client/stdio.js")
+			const clientModule = await import("@modelcontextprotocol/sdk/client/index.js")
+			const StdioClientTransport = vi.mocked(stdioModule.StdioClientTransport)
+			const Client = vi.mocked(clientModule.Client)
+
+			StdioClientTransport.mockImplementation(function () {
+				return {
+					start: vi.fn().mockResolvedValue(undefined),
+					close: vi.fn().mockResolvedValue(undefined),
+					stderr: { on: vi.fn() },
+					onerror: null,
+					onclose: null,
+				}
+			})
+			Client.mockImplementation(function () {
+				return {
+					connect: vi.fn().mockResolvedValue(undefined),
+					close: vi.fn().mockResolvedValue(undefined),
+					getInstructions: vi.fn().mockReturnValue(undefined),
+					request: vi.fn().mockResolvedValue({ tools: [], resources: [], resourceTemplates: [] }),
+				}
+			})
+
+			vi.mocked(fs.readFile).mockResolvedValue(serverConfigFile(["old.js"]))
+			const hub = new McpHub(mockProvider as ClineProvider)
+			await hub.waitUntilReady()
+			expect(StdioClientTransport).toHaveBeenLastCalledWith(expect.objectContaining({ args: ["old.js"] }))
+			StdioClientTransport.mockClear()
+			return { hub, StdioClientTransport }
+		}
+
+		it("connects with the config currently in the settings file, not the cached one", async () => {
+			const { hub, StdioClientTransport } = await createHubWithServer()
+			vi.mocked(fs.readFile).mockResolvedValue(serverConfigFile(["new.js"]))
+
+			await hub.restartConnection("reload-server", "global")
+
+			expect(StdioClientTransport).toHaveBeenCalledTimes(1)
+			expect(StdioClientTransport).toHaveBeenCalledWith(expect.objectContaining({ args: ["new.js"] }))
+			const connection = hub["findConnection"]("reload-server", "global")
+			expect(JSON.parse(connection!.server.config).args).toEqual(["new.js"])
+			expect(hub.isConnecting).toBe(false)
+		})
+
+		it.each([
+			["the server was removed from the file", JSON.stringify({ mcpServers: {} })],
+			["the file is not valid JSON", "{ not json"],
+			[
+				"the server entry is invalid",
+				JSON.stringify({ mcpServers: { "reload-server": { type: "stdio", args: ["new.js"] } } }),
+			],
+		])("keeps the running server and shows an error when %s", async (_case, fileContent) => {
+			const { hub, StdioClientTransport } = await createHubWithServer()
+			const connectionBefore = hub["findConnection"]("reload-server", "global")
+			vi.mocked(fs.readFile).mockResolvedValue(fileContent)
+
+			await hub.restartConnection("reload-server", "global")
+
+			expect(StdioClientTransport).not.toHaveBeenCalled()
+			expect(hub["findConnection"]("reload-server", "global")).toBe(connectionBefore)
+			const vscode = await import("vscode")
+			expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
+				expect.stringContaining(
+					t("mcp:errors.restart_config_unreadable", { serverName: "reload-server", error: "" }),
+				),
+			)
+			expect(hub.isConnecting).toBe(false)
+		})
+	})
+
 	describe("Windows command wrapping", () => {
 		let StdioClientTransport: ReturnType<typeof vi.fn>
 		let Client: ReturnType<typeof vi.fn>

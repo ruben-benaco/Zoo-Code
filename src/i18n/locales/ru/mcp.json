@@ -4,6 +4,7 @@
 		"invalid_settings_validation": "Неверный формат настроек MCP: {{errorMessages}}",
 		"create_json": "Не удалось создать или открыть .roo/mcp.json: {{error}}",
 		"failed_update_project": "Не удалось обновить серверы проекта MCP",
+		"restart_config_unreadable": "Не удалось перезапустить {{serverName}}: не удалось прочитать его конфигурацию: {{error}}",
 		"invalidJsonArgument": "Zoo попытался использовать {{toolName}} с недопустимым JSON-аргументом. Повторная попытка...",
 		"refresh_after_disable": "Не удалось обновить соединения MCP после отключения",
 		"refresh_after_enable": "Не удалось обновить соединения MCP после включения",

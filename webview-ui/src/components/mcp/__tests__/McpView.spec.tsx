@@ -48,7 +48,9 @@ vi.mock("@src/components/ui", () => ({
 	DialogDescription: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 	DialogFooter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 	ToggleSwitch: () => null,
-	StandardTooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	StandardTooltip: ({ children, content }: { children: React.ReactNode; content: string }) => (
+		<span title={content}>{children}</span>
+	),
 }))
 
 vi.mock("../McpEnabledToggle", () => ({
@@ -123,6 +125,19 @@ describe("McpView", () => {
 
 			expect(screen.getByText(/mcp:tabs\.logs/)).toHaveTextContent("(1)")
 			expect(screen.queryByText(/mcp:tabs\.tools/)).not.toBeInTheDocument()
+		})
+
+		it("has a Reload button with a tooltip that restarts the server", () => {
+			renderWithServer(crashedServer)
+
+			const tooltip = screen.getByTitle("mcp:serverStatus.reloadTooltip")
+			fireEvent.click(tooltip.querySelector("button")!)
+
+			expect(vscode.postMessage).toHaveBeenCalledWith({
+				type: "restartMcpServer",
+				text: "crashy-server",
+				source: "global",
+			})
 		})
 
 		it("is not expandable while disabled", () => {

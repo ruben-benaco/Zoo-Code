@@ -50,6 +50,7 @@
 	"serverStatus": {
 		"retrying": "Mencoba lagi...",
 		"retryConnection": "Coba Koneksi Lagi",
+		"reloadTooltip": "Mulai ulang server ini menggunakan pengaturan terkini dari file konfigurasi MCP-nya",
 		"showLogs": "Tampilkan Log",
 		"lastStderr": "Output stderr terakhir:"
 	},

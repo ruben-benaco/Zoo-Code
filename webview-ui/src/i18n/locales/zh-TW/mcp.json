@@ -50,6 +50,7 @@
 	"serverStatus": {
 		"retrying": "重試中...",
 		"retryConnection": "重試連線",
+		"reloadTooltip": "使用 MCP 設定檔中的目前設定重新啟動此伺服器",
 		"showLogs": "顯示記錄",
 		"lastStderr": "最近的 stderr 輸出："
 	},

@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "Tornant a intentar...",
 		"retryConnection": "Torna a intentar la connexió",
+		"reloadTooltip": "Reinicia aquest servidor amb la configuració actual del seu fitxer de configuració MCP",
 		"showLogs": "Mostra els registres",
 		"lastStderr": "Última sortida de stderr:"
 	},

@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "다시 시도 중...",
 		"retryConnection": "연결 다시 시도",
+		"reloadTooltip": "MCP 구성 파일의 현재 설정으로 이 서버를 다시 시작합니다",
 		"showLogs": "로그 보기",
 		"lastStderr": "마지막 stderr 출력:"
 	},

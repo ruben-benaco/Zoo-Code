@@ -1881,42 +1881,55 @@ export class McpHub {
 			return
 		}
 
-		// Get existing connection and update its status
+		try {
+			await this.restartExistingConnection(serverName, source)
+		} finally {
+			this.isConnecting = false
+		}
+	}
+
+	private async restartExistingConnection(serverName: string, source?: "global" | "project"): Promise<void> {
 		const connection = this.findConnection(serverName, source)
-		const config = connection?.server.config
-		if (config) {
-			logMcpServerEvent(serverName, "Restarting")
-			vscode.window.showInformationMessage(t("mcp:info.server_restarting", { serverName }))
-			connection.server.status = "connecting"
-			connection.server.error = ""
-			await this.notifyWebviewOfServerChanges()
-			await delay(500) // artificial delay to show user that server is restarting
-			try {
-				await this.deleteConnection(serverName, connection.server.source)
-				// Parse the config to validate it
-				const parsedConfig = JSON.parse(config)
-				try {
-					// Validate the config
-					const validatedConfig = this.validateServerConfig(parsedConfig, serverName)
+		if (!connection) {
+			return
+		}
+		const serverSource = connection.server.source || "global"
 
-					// Clear OAuth tokens for streamable-http servers on restart
-					if (validatedConfig.type === "streamable-http" && this.secretStorage) {
-						await this.secretStorage.deleteOAuthData(validatedConfig.url, validatedConfig.oauth?.clientId)
-					}
-
-					// Try to connect again using validated config
-					await this.connectToServer(serverName, validatedConfig, connection.server.source || "global")
-					vscode.window.showInformationMessage(t("mcp:info.server_connected", { serverName }))
-				} catch (validationError) {
-					this.showErrorMessage(`Invalid configuration for MCP server "${serverName}"`, validationError)
-				}
-			} catch (error) {
-				this.showErrorMessage(`Failed to restart ${serverName} MCP server connection`, error)
-			}
+		// Read the file rather than reuse the cached config, which misses edits the watcher did not apply.
+		let config: z.infer<typeof ServerConfigSchema>
+		try {
+			config = await this.readServerConfigFromFile(serverName, serverSource)
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error)
+			console.error(`Failed to read configuration for MCP server "${serverName}":`, error)
+			vscode.window.showErrorMessage(
+				t("mcp:errors.restart_config_unreadable", { serverName, error: errorMessage }),
+			)
+			return
 		}
 
+		logMcpServerEvent(serverName, "Restarting")
+		vscode.window.showInformationMessage(t("mcp:info.server_restarting", { serverName }))
+		connection.server.status = "connecting"
+		connection.server.error = ""
 		await this.notifyWebviewOfServerChanges()
-		this.isConnecting = false
+		await delay(500) // artificial delay to show user that server is restarting
+		try {
+			await this.deleteConnection(serverName, serverSource)
+
+			// Clear OAuth tokens for streamable-http servers on restart
+			if (config.type === "streamable-http" && this.secretStorage) {
+				await this.secretStorage.deleteOAuthData(config.url, config.oauth?.clientId)
+			}
+
+			await this.connectToServer(serverName, config, serverSource)
+			if (!config.disabled) {
+				vscode.window.showInformationMessage(t("mcp:info.server_connected", { serverName }))
+			}
+		} catch (error) {
+			this.showErrorMessage(`Failed to restart ${serverName} MCP server connection`, error)
+		}
+		await this.notifyWebviewOfServerChanges()
 	}
 
 	public async refreshAllConnections(): Promise<void> {
@@ -1983,9 +1996,14 @@ export class McpHub {
 		}
 		// Get global server order from settings file
 		const settingsPath = await this.getMcpSettingsFilePath()
-		const content = await fs.readFile(settingsPath, "utf-8")
-		const config = JSON.parse(content)
-		const globalServerOrder = Object.keys(config.mcpServers || {})
+		let globalServerOrder: string[] = []
+		try {
+			const content = await fs.readFile(settingsPath, "utf-8")
+			const config = JSON.parse(content)
+			globalServerOrder = Object.keys(config.mcpServers || {})
+		} catch {
+			// An unreadable settings file must not stop the webview from seeing status changes
+		}
 
 		// Get project server order if available
 		const projectMcpPath = await this.getProjectMcpPath()

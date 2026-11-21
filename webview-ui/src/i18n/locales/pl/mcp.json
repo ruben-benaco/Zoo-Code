@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "Ponawianie...",
 		"retryConnection": "Ponów połączenie",
+		"reloadTooltip": "Uruchom ponownie ten serwer z bieżącymi ustawieniami z jego pliku konfiguracyjnego MCP",
 		"showLogs": "Pokaż logi",
 		"lastStderr": "Ostatnie wyjście stderr:"
 	},

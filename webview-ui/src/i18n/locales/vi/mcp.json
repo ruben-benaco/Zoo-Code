@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "Đang thử lại...",
 		"retryConnection": "Thử kết nối lại",
+		"reloadTooltip": "Khởi động lại máy chủ này với cài đặt hiện tại từ tệp cấu hình MCP của nó",
 		"showLogs": "Xem nhật ký",
 		"lastStderr": "Đầu ra stderr gần nhất:"
 	},

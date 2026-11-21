@@ -4,6 +4,7 @@
 		"invalid_settings_validation": "MCP設定フォーマットが無効です：{{errorMessages}}",
 		"create_json": ".roo/mcp.jsonの作成または開くことに失敗しました：{{error}}",
 		"failed_update_project": "プロジェクトMCPサーバーの更新に失敗しました",
+		"restart_config_unreadable": "{{serverName}} を再起動できませんでした: 設定の読み込みに失敗しました: {{error}}",
 		"invalidJsonArgument": "Zooが無効なJSON引数で{{toolName}}を使用しようとしました。再試行中...",
 		"refresh_after_disable": "無効化後にMCP接続の更新に失敗しました",
 		"refresh_after_enable": "有効化後にMCP接続の更新に失敗しました",

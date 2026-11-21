@@ -49,6 +49,7 @@
 	"serverStatus": {
 		"retrying": "Riprovo...",
 		"retryConnection": "Riprova connessione",
+		"reloadTooltip": "Riavvia questo server con le impostazioni attuali del suo file di configurazione MCP",
 		"showLogs": "Mostra log",
 		"lastStderr": "Ultimo output stderr:"
 	},
